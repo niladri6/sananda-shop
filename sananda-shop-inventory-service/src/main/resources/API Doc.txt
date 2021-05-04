@@ -1,0 +1,9 @@
+
+
+/api/brand/{id}     
+POST,PUT:
+     {
+            "name": "American Tourister",
+            "description": "quality matters",
+            "categories" : [1, 2, 3] // pass empty [] for delete all the categories
+     }
