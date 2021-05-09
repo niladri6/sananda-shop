@@ -1,21 +1,15 @@
 package com.sananda.inventory.service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.sananda.inventory.common.Constants;
 import com.sananda.inventory.dto.VariantDTO;
-import com.sananda.inventory.entity.Category;
 import com.sananda.inventory.entity.Variants;
-import com.sananda.inventory.exception.CustomException;
 import com.sananda.inventory.exception.ResourceNotFoundException;
 import com.sananda.inventory.repository.CategoryRepository;
 import com.sananda.inventory.repository.VariantRepository;

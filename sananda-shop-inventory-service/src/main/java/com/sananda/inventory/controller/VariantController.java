@@ -2,7 +2,6 @@ package com.sananda.inventory.controller;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sananda.inventory.common.Constants;
-import com.sananda.inventory.dto.ProductDTO;
 import com.sananda.inventory.dto.VariantDTO;
 import com.sananda.inventory.entity.Product;
 import com.sananda.inventory.entity.Variants;
@@ -32,7 +30,6 @@ import com.sananda.inventory.response.ApiSuccessResponse;
 import com.sananda.inventory.response.Error;
 import com.sananda.inventory.service.ProductService;
 import com.sananda.inventory.service.VariantService;
-import com.sananda.inventory.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 

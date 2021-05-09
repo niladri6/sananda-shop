@@ -64,14 +64,11 @@ public class Variants extends Audit {
 //			CascadeType.MERGE, CascadeType.REFRESH })
 //	private Set<Product> products;
 
-	@JsonBackReference
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "product_id")
-	private Product product;
-
-	public void removeProduct(Product product) {
-
-	}
+	// UNI-DIRECTIONAL MAPPING
+//	@JsonBackReference
+//	@ManyToOne(fetch = FetchType.LAZY) // , optional = false
+//	@JoinColumn(name = "product_id")
+//	private Product product;
 
 //	@OneToMany(mappedBy = "variant", targetEntity = ProductSize.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //	@JsonManagedReference

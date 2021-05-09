@@ -1,6 +1,7 @@
 package com.sananda.inventory.response;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -14,4 +15,6 @@ public class Error implements Serializable {
 	private static final long serialVersionUID = 1L;
 	//private boolean success;
 	private String message;
+	private String description;
+	private LocalDateTime timestamp;
 }

@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sananda.inventory.common.Constants;
 import com.sananda.inventory.dto.ProductDTO;
 import com.sananda.inventory.entity.Product;
-import com.sananda.inventory.exception.CustomException;
 import com.sananda.inventory.exception.InvalidDataException;
 import com.sananda.inventory.exception.ResourceNotFoundException;
 import com.sananda.inventory.response.ApiErrorResponse;
@@ -109,6 +108,7 @@ public class ProductController {
 			Error error = new Error();
 			error.setMessage(e.getMessage());
 			errorResponse.setError(error);
+			System.out.println(errorResponse);
 			//log.info(errorResponse.toString());
 			return new ResponseEntity<ApiErrorResponse>(errorResponse, HttpStatus.EXPECTATION_FAILED);
 		}	
@@ -120,14 +120,11 @@ public class ProductController {
 	}
 	
 	@PutMapping("/product/{id}")
-	public ResponseEntity<?> updateProductById(@PathVariable(value="id") long id, @Valid @RequestBody ProductDTO productDTO) {
-		//log.info("product req: ", product.toString());
-		
+	public ResponseEntity<?> updateProductById(@PathVariable(value="id") long id, @RequestBody ProductDTO productDTO) {
 		System.out.println("product req: "+ productDTO);
 		
 		
 		ApiResponse response = new ApiResponse();
-		//ApiSuccessResponse response = new ApiSuccessResponse();
 		
 		Product updatedProduct = null;
 		try {
@@ -139,15 +136,15 @@ public class ProductController {
 			response.setSuccess(Boolean.TRUE);
 			response.setData(Arrays.asList(updatedProduct));
 			
-		} catch (ResourceNotFoundException e) {
+		} catch (ResourceNotFoundException | InvalidDataException e) {
 			ApiErrorResponse errorResponse = new ApiErrorResponse();
 			errorResponse.setSuccess(Boolean.FALSE);
 			Error error = new Error();
 			error.setMessage(e.getMessage());
 			errorResponse.setError(error);
 			//log.info(errorResponse.toString());
-			return new ResponseEntity<ApiErrorResponse>(errorResponse, HttpStatus.EXPECTATION_FAILED);
-		}	
+			return new ResponseEntity<ApiErrorResponse>(HttpStatus.EXPECTATION_FAILED);
+		}
 		
 		//log.info(response.toString());
 		//return ResponseEntity.ok().body(response);

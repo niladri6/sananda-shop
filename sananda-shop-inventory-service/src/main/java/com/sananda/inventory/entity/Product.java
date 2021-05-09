@@ -1,6 +1,7 @@
 package com.sananda.inventory.entity;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -11,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -74,19 +74,26 @@ public class Product extends Audit {
 //			@JoinColumn(name = "variant_id") })
 //	private Set<Variants> variants;
 	
+	// UNI-DIRECTIONAL MAPPING
+	
 	@JsonManagedReference
-	@OneToMany(mappedBy = "product", targetEntity = Variants.class, 
-		cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(targetEntity = Variants.class, cascade = CascadeType.ALL)
+	@JoinColumn(name = "product_id")
 	private Set<Variants> variants;
 	
 	public void addVariant(Variants variant) {
-		variant.setProduct(this);
-		this.variants.add(variant);
+		if(variants == null) {
+			variants = new HashSet<Variants>();
+		}
+		variants.add(variant);
 	}
 	
 	public void removeVariant(Variants variant) {
-		variant.setProduct(null);
-		this.variants.remove(variant);
+		if(!variants.isEmpty()) {
+		variants.remove(variant);
+		}
+//		variant.setProduct(null);
+//		this.variants.remove(variant);
 	}
 	
 }

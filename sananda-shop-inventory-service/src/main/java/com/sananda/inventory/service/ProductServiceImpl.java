@@ -82,19 +82,14 @@ public class ProductServiceImpl implements ProductService {
 		Category category = categoryService.getById(productDTO.getCategoryId());
 		product.setCategory(category);
 		
-		Set<Variants> variants = new HashSet<Variants>();
+		//Set<Variants> variants = new HashSet<Variants>();
 		// variant save
 		for(VariantDTO variantDTO: productDTO.getVariants()) {
-			//Variants savedVariant = variantService.save(variantDTO);
 			Variants variant =  modelMapper.map(variantDTO, Variants.class);
 			if(!Utils.isEmpty(variant)) {
-				variant.setProduct(product); // satisfy two level association
-				//product.getVariants().add(variant); // 1
-				variants.add(variant); // 2
-				//product.addVariant(variant); // for association
+				product.addVariant(variant); // for association
 			}
 		}
-		product.setVariants(variants); //2
 		if(product.getVariants().isEmpty()) {
 			throw new InvalidDataException(Constants.PRODUCT_DONT_HAVE_VARIANT);
 		}
@@ -106,6 +101,9 @@ public class ProductServiceImpl implements ProductService {
 		return savedProduct;
 	}
 
+	/*
+	 * update product with different variant
+	 * */
 	@Override
 	public Product update(long id, ProductDTO productDTO) {
 		if(!productRepo.existsById(id)) {
@@ -122,31 +120,36 @@ public class ProductServiceImpl implements ProductService {
 		product.setShopImportDate(productDTO.getShopImportDate());
 		product.setDistImportDate(productDTO.getDistImportDate());
 		
-		// category save
+		// update category
 		Category category = categoryService.getById(productDTO.getCategoryId());
 		product.setCategory(category);
 		
-		/*
-		 * NEED MOD
-		 * */
-//		// variant save
-//		for(VariantDTO variantDTO: productDTO.getVariants()) {
-//			if(!variantService.existsById(variantDTO.getId())) {
-//				Variants savedVariant = variantService.save(variantDTO);
-//				if(!Utils.isEmpty(savedVariant)) {
-//					product.getVariants().add(savedVariant);
-//				}
-//			}
-//		}
+		// update variants
 		Set<Variants> variants = new HashSet<Variants>();
+		
 		for(VariantDTO variantDTO: productDTO.getVariants()) {
 			Variants variant =  modelMapper.map(variantDTO, Variants.class);
-			if(!Utils.isEmpty(variant)) {
-				variant.setProduct(product); // satisfy two level association
-				variants.add(variant);
+//			if(variant.getId() != null) {
+//				variants.add(variant);
+//			}
+			if(variant.getId() != null) {
+				if(variantService.existsById(variant.getId())) {
+					variants.add(variant);
+				} else {
+					throw new ResourceNotFoundException(String.format("Variants not found with Id = %s", variant.getId()));
+				}
+			} else {
+				throw new InvalidDataException("variant id is Required");
 			}
 		}
-		product.setVariants(variants);
+		//System.out.println("requested variants" + variants);
+		
+		if(!variants.isEmpty()) {
+			product.setVariants(variants);
+		}
+		
+		//System.out.println("updated product" + product);
+		//System.out.println("updated product-variants" + product.getVariants());
 		
 		
 		if(product.getVariants().isEmpty()) {
