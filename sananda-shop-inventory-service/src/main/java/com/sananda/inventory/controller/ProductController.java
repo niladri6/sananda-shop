@@ -127,7 +127,7 @@ public class ProductController {
 		ApiResponse response = new ApiResponse();
 		
 		Product updatedProduct = null;
-		try {
+		//try {
 			updatedProduct = productService.update(id, productDTO);
 			
 			//log.info("updated product : ", updatedProduct.toString());
@@ -136,15 +136,15 @@ public class ProductController {
 			response.setSuccess(Boolean.TRUE);
 			response.setData(Arrays.asList(updatedProduct));
 			
-		} catch (ResourceNotFoundException | InvalidDataException e) {
-			ApiErrorResponse errorResponse = new ApiErrorResponse();
-			errorResponse.setSuccess(Boolean.FALSE);
-			Error error = new Error();
-			error.setMessage(e.getMessage());
-			errorResponse.setError(error);
-			//log.info(errorResponse.toString());
-			return new ResponseEntity<ApiErrorResponse>(HttpStatus.EXPECTATION_FAILED);
-		}
+//		} catch (ResourceNotFoundException | InvalidDataException e) {
+//			ApiErrorResponse errorResponse = new ApiErrorResponse();
+//			errorResponse.setSuccess(Boolean.FALSE);
+//			Error error = new Error();
+//			error.setMessage(e.getMessage());
+//			errorResponse.setError(error);
+//			//log.info(errorResponse.toString());
+//			return new ResponseEntity<ApiErrorResponse>(HttpStatus.EXPECTATION_FAILED);
+//		}
 		
 		//log.info(response.toString());
 		//return ResponseEntity.ok().body(response);
