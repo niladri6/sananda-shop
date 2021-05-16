@@ -1,5 +1,6 @@
 package com.sananda.inventory.entity;
 
+import java.util.Comparator;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -23,7 +24,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
-@EqualsAndHashCode(callSuper=false, exclude="categories")
+@EqualsAndHashCode(callSuper = false, exclude = "categories")
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -36,33 +37,46 @@ public class Brand extends Audit {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="id")
+	@Column(name = "id")
 	private Long id;
-	
-	@Column(name="name")
+
+	@Column(name = "name")
 	private String name;
-	
-	@Column(name="description")
+
+	@Column(name = "description")
 	private String description;
-	
+
 //	@OneToMany(mappedBy = "brand", targetEntity = Category.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //	@JsonManagedReference
 //	private Set<Category> categories;
-	
-	
+
 	@JsonManagedReference
-	@ManyToMany(targetEntity = Category.class, fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.DETACH,
-			CascadeType.MERGE, CascadeType.REFRESH })
-    @JoinTable(
-        name = "brand_category", 
-        joinColumns = { @JoinColumn(name = "brand_id", referencedColumnName = "id") }, 
-        inverseJoinColumns = { @JoinColumn(name = "category_id", referencedColumnName = "id") }
-    )
-    Set<Category> categories; // = new HashSet<>();
-	
+	@ManyToMany(targetEntity = Category.class, fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST,
+			CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH })
+	@JoinTable(name = "brand_category", joinColumns = {
+			@JoinColumn(name = "brand_id", referencedColumnName = "id") }, inverseJoinColumns = {
+					@JoinColumn(name = "category_id", referencedColumnName = "id") })
+	Set<Category> categories; // = new HashSet<>();
+
 //	@OneToMany(mappedBy = "brand", targetEntity = Product.class, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //	@JsonManagedReference
 //	private List<Product> products;
 	
 	
+	
+//	public static Comparator<Brand> NameComparator = new Comparator<Brand>() {
+//		public int compare(Brand b1, Brand b2) {
+//
+//			String name1 = b1.getName().toUpperCase();
+//			String name2 = b2.getName().toUpperCase();
+//
+//			// ascending order
+//			return name1.compareTo(name2);
+//
+//			// descending order
+//			// return
+//			// StudentName2.compareTo(StudentName1);
+//		}
+//	};
+
 }

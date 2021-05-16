@@ -39,8 +39,8 @@ public class Variants extends Audit {
 	private Long id;
 
 	// @Column(name="code", unique = true)
-	@Column(name = "code")
-	private String code;
+	@Column(name = "sku", unique = true)
+	private String sku;
 
 	@Column(name = "mrp")
 	private BigDecimal mrp;

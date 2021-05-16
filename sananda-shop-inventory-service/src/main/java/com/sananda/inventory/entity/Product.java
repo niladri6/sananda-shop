@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -77,6 +78,7 @@ public class Product extends Audit {
 	// UNI-DIRECTIONAL MAPPING
 	
 	@JsonManagedReference
+	@OrderBy("created_at DESC")
 	@OneToMany(targetEntity = Variants.class, cascade = CascadeType.ALL)
 	@JoinColumn(name = "product_id")
 	private Set<Variants> variants;
