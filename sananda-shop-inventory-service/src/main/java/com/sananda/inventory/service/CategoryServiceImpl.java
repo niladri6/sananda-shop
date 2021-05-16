@@ -39,6 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public Category getById(long id) {
 		Optional<Category> category = categoryRepo.findById(id);
+		// null & empty
 		if (!category.isPresent()) {
 			throw new ResourceNotFoundException(String.format("Category not found with Id = %s", id));
 		}
