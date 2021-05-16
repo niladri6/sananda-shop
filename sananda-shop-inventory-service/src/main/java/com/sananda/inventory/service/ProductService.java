@@ -13,6 +13,7 @@ public interface ProductService {
 	List<Product> getAllProducts();
 	Page<Product> findAll(Pageable page); // pagination
 	Product getById(long id);
+	boolean existsById(long id);
 	Product getByName(String name);
 
 	Page<Product> getProductsByCategory(Category category, Pageable page);

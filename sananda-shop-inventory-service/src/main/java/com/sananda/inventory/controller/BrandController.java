@@ -50,7 +50,6 @@ public class BrandController {
 		return ResponseEntity.ok().body(response);
 	}
 	
-	
 	@GetMapping("/brand/{id}")
 	public ResponseEntity<?> getBrandById(@PathVariable(value="id") long id) throws IOException {
 		ApiResponse response = new ApiResponse();
@@ -113,7 +112,6 @@ public class BrandController {
 		return new ResponseEntity<ApiResponse>(response, HttpStatus.ACCEPTED);
 	}
 	
-	//
 	@PutMapping("/brand/{id}")
 	public ResponseEntity<?> updateBrandById(@PathVariable(value="id") long id, @Valid @RequestBody BrandDTO brand) {
 		//log.info("brand req: ", brand.toString());
@@ -161,9 +159,6 @@ public class BrandController {
 		//return ResponseEntity.accepted().body(response);
 		return new ResponseEntity<ApiResponse>(response, HttpStatus.ACCEPTED);
 	}
-	
-	
-	
 	
 	@DeleteMapping("/brand/{id}")
 	public ResponseEntity<?> deleteBrandById(@PathVariable(value="id") long id) throws IOException {

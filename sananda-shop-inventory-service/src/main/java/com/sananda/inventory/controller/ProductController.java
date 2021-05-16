@@ -33,9 +33,6 @@ import com.sananda.inventory.response.ApiSuccessResponse;
 import com.sananda.inventory.response.Error;
 import com.sananda.inventory.service.ProductService;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @RestController
 @RequestMapping(value = "/api")
 public class ProductController {
@@ -60,7 +57,6 @@ public class ProductController {
 		//log.info(response.toString());
 		return ResponseEntity.ok().body(response);
 	}
-	
 	
 	@GetMapping("/product/{id}")
 	public ResponseEntity<?> getProductById(@PathVariable(value="id") long id) throws IOException {
@@ -152,9 +148,6 @@ public class ProductController {
 		return new ResponseEntity<ApiResponse>(response, HttpStatus.ACCEPTED);
 	}
 	
-	
-	
-	
 	@DeleteMapping("/product/{id}")
 	public ResponseEntity<?> deleteProductById(@PathVariable(value="id") long id) throws IOException {
 		ApiSuccessResponse response = new ApiSuccessResponse();
@@ -186,5 +179,4 @@ public class ProductController {
 	}
 	
 	
-
 }

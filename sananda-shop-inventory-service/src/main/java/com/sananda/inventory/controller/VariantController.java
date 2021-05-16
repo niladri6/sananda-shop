@@ -2,6 +2,8 @@ package com.sananda.inventory.controller;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sananda.inventory.common.Constants;
@@ -30,6 +33,7 @@ import com.sananda.inventory.response.ApiSuccessResponse;
 import com.sananda.inventory.response.Error;
 import com.sananda.inventory.service.ProductService;
 import com.sananda.inventory.service.VariantService;
+import com.sananda.inventory.utils.Utils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,6 +50,52 @@ public class VariantController {
 
 	@Autowired
 	private VariantService variantService;
+
+//	@Autowired
+//	private VariantRepository variantRepo;
+
+	/*
+	 * GET PRODUCT VARIANTS
+	 */
+	@PostMapping("/variants")
+	public ResponseEntity<?> getProductVariants(
+			@RequestParam(value = "page", defaultValue = "0", required = false) Integer page,
+			@RequestParam(value = "size", defaultValue = "20", required = false) Integer size,
+			@RequestBody Map<String, Long> param) {
+		// Pageable paging = PageRequest.of(page, size,
+		// Sort.by("createdAt").descending());
+
+		// ApiResponse response = new ApiResponse();
+		// Product product = productService.getById(productId);
+
+		for (Map.Entry<String, Long> entry : param.entrySet()) {
+			System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+		}
+
+		// working code
+//		if (!param.containsKey("product_id") || (param.get("product_id") == null )) {
+//			throw new InvalidDataException("product_id is required");
+//		}
+
+		// experiment
+		if (Utils.isKeyValueNull(param, "product_id")) {
+			throw new InvalidDataException("product_id is required");
+		}
+
+		Long productId = param.get("product_id");
+		// if(productId == null ) throw new InvalidDataException("product_id is
+		// required");
+		System.out.println("productId: " + productId);
+
+		List<Variants> variants = variantService.getByProductId(productId);
+
+		// System.out.println("variants: " + variants.toString());
+
+		ApiResponse response = new ApiResponse();
+		response.setSuccess(Boolean.TRUE);
+		response.setData(variants);
+		return ResponseEntity.ok().body(response);
+	}
 
 	@GetMapping("/variant/{id}")
 	public ResponseEntity<?> getById(@PathVariable(value = "id") long id) throws IOException {
@@ -70,10 +120,8 @@ public class VariantController {
 		return ResponseEntity.ok().body(response);
 	}
 
-	
-	// wrong// need mod
 	/*
-	 * Save variant with different different variants.
+	 * Save variant in a product.
 	 */
 	@PostMapping("product/{productId}/variant")
 	public ResponseEntity<?> saveVariant(@PathVariable("productId") Long productId,
@@ -81,87 +129,58 @@ public class VariantController {
 		System.out.println("variant req: " + variantDTO);
 
 		ApiResponse response = new ApiResponse();
+		Product product = productService.getById(productId);
 
-		Variants savedVariant = null;
-		try {
-			Product product = productService.getById(productId);
-			savedVariant = variantService.save(variantDTO);
-			product.getVariants().add(savedVariant);
-
-			System.out.println("saved variant: " + savedVariant);
-			response.setSuccess(Boolean.TRUE);
-			response.setData(Arrays.asList(savedVariant));
-		} catch (ResourceNotFoundException | InvalidDataException e) {
-			ApiErrorResponse errorResponse = new ApiErrorResponse();
-			errorResponse.setSuccess(Boolean.FALSE);
-			Error error = new Error();
-			error.setMessage(e.getMessage());
-			errorResponse.setError(error);
-			// log.info(errorResponse.toString());
-			return new ResponseEntity<ApiErrorResponse>(errorResponse, HttpStatus.EXPECTATION_FAILED);
+		Variants variant = variantService.save(productId, variantDTO);
+		if (!Utils.isEmpty(variant)) {
+			product.addVariant(variant); // for association
 		}
+
+		System.out.println("saved variant: " + variant);
+		response.setSuccess(Boolean.TRUE);
+		response.setData(Arrays.asList(product.getVariants()));
+
 		return new ResponseEntity<ApiResponse>(response, HttpStatus.ACCEPTED);
 	}
 
-	// wrong// need mod
 	@PutMapping("product/{productId}/variant/{variantId}")
-	public ResponseEntity<?> updateVariantById(@PathVariable(value = "productId") long pId, 
-			@PathVariable(value = "variantId") long vId,
-			@Valid @RequestBody VariantDTO variantDTO) {
+	public ResponseEntity<?> updateVariantById(@PathVariable(value = "productId") long pId,
+			@PathVariable(value = "variantId") long vId, @Valid @RequestBody VariantDTO variantDTO) {
 
 		System.out.println("variant req: " + variantDTO);
-
-		ApiResponse response = new ApiResponse();
 		
+		ApiResponse response = new ApiResponse();
+
 		Variants updatedVariant = null;
-		try {
-			Product product = productService.getById(pId);
-//			Set<Variants> variants = product.getVariants();
-			
+		if (productService.existsById(pId)) {
 			updatedVariant = variantService.update(vId, variantDTO);
+		}
 
-			// log.info("updated variant : ", updatedProduct.toString());
-			System.out.println("updated variant : " + updatedVariant);
+		System.out.println("updated variant : " + updatedVariant);
 
+		if (Utils.isEmpty(updatedVariant)) {
+			response.setSuccess(Boolean.FALSE);
+		} else {
 			response.setSuccess(Boolean.TRUE);
 			response.setData(Arrays.asList(updatedVariant));
-
-		} catch (ResourceNotFoundException e) {
-			ApiErrorResponse errorResponse = new ApiErrorResponse();
-			errorResponse.setSuccess(Boolean.FALSE);
-			Error error = new Error();
-			error.setMessage(e.getMessage());
-			errorResponse.setError(error);
-			return new ResponseEntity<ApiErrorResponse>(errorResponse, HttpStatus.EXPECTATION_FAILED);
 		}
+
 		return new ResponseEntity<ApiResponse>(response, HttpStatus.ACCEPTED);
 	}
 
 	@DeleteMapping("/variant/{id}")
 	public ResponseEntity<?> deleteById(@PathVariable(value = "id") long id) throws IOException {
 		ApiSuccessResponse response = new ApiSuccessResponse();
-
-		try {
-			boolean status = variantService.delete(id);
-			System.out.println("status: " + status);
-			if (status) {
-				response.setSuccess(Boolean.TRUE);
-				response.setMessage(Constants.DELETED_MSG);
-			} else {
-				response.setSuccess(Boolean.FALSE);
-				response.setMessage(Constants.NOT_DELETED_MSG);
-			}
-		} catch (ResourceNotFoundException e) {
-			ApiErrorResponse errorResponse = new ApiErrorResponse();
-			errorResponse.setSuccess(Boolean.FALSE);
-			Error error = new Error();
-			error.setMessage(e.getMessage());
-			errorResponse.setError(error);
-			return new ResponseEntity<ApiErrorResponse>(errorResponse, HttpStatus.EXPECTATION_FAILED);
+		boolean status = variantService.delete(id);
+		System.out.println("status: " + status);
+		if (status) {
+			response.setSuccess(Boolean.TRUE);
+			response.setMessage(Constants.DELETED_MSG);
+		} else {
+			response.setSuccess(Boolean.FALSE);
+			response.setMessage(Constants.NOT_DELETED_MSG);
 		}
-
 		System.out.println("success resp: " + response);
-		// log.info(response.toString());
 		return ResponseEntity.ok().body(response);
 	}
 
