@@ -18,6 +18,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	
 	Page<Product> findByCategory(Category category, Pageable page);
 	
+	
+	
+//	List<ProductVariantResponse> getJoinInformation();
 
 	
 }

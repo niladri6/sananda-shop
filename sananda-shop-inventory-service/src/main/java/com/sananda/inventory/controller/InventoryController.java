@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sananda.inventory.entity.Brand;
 import com.sananda.inventory.entity.Category;
+import com.sananda.inventory.entity.Product;
 import com.sananda.inventory.exception.InvalidDataException;
+import com.sananda.inventory.exception.ResourceNotFoundException;
 import com.sananda.inventory.response.ApiResponse;
 import com.sananda.inventory.response.MenuItems;
 import com.sananda.inventory.service.BrandService;
@@ -54,10 +56,10 @@ public class InventoryController {
 			itemList.add(item);
 		}
 
-		Utils.menuItemSort(itemList);
 		if (itemList.isEmpty()) {
-			throw new ResolutionException("Brand not found");
+			throw new ResourceNotFoundException("Brand not found");
 		}
+		Utils.menuItemSort(itemList);
 		response.setSuccess(Boolean.TRUE);
 		response.setData(itemList);
 		return ResponseEntity.ok().body(response);
@@ -85,14 +87,35 @@ public class InventoryController {
 			item.setName(category.getName());
 			itemList.add(item);
 		}
-		Utils.menuItemSort(itemList);
 
 		if (itemList.isEmpty()) {
 			throw new ResolutionException("Category not found");
 		}
+
+		Utils.menuItemSort(itemList);
+
 		response.setSuccess(Boolean.TRUE);
 		response.setData(itemList);
 		return ResponseEntity.ok().body(response);
+	}
+
+	@PostMapping("/brand-category-products")
+	public ResponseEntity<?> getProductByCategory(@RequestBody Map<String, Long> param) {
+		// experiment
+		if (Utils.isKeyValueNull(param, "category_id")) {
+			throw new InvalidDataException("category_id is required");
+		}
+
+		Long categoryId = param.get("category_id");
+
+		List<Product> products = categoryService.getById(categoryId).getProducts();
+		
+		ApiResponse response = new ApiResponse();
+		
+		response.setSuccess(Boolean.TRUE);
+		response.setData(products);
+		return ResponseEntity.ok().body(response);
+
 	}
 
 }

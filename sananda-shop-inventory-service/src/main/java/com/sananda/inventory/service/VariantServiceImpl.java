@@ -93,6 +93,7 @@ public class VariantServiceImpl implements VariantService {
 		variant.setDiscount(variantDTO.getDiscount());
 		variant.setSize(variantDTO.getSize());
 		variant.setColour(variantDTO.getColour());
+		variant.setQuantity(variantDTO.getQuantity());
 
 		Variants updatedVariants = variantRepo.save(variant);
 		if (Utils.isEmpty(updatedVariants)) {

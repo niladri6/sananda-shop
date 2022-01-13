@@ -1,6 +1,7 @@
 package com.sananda.inventory.entity;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -53,6 +54,9 @@ public class Variants extends Audit {
 
 	@Column(name = "colour")
 	private String colour;
+	
+	@Column(name="quantity")
+	private BigInteger quantity;
 
 //	@ManyToOne(fetch = FetchType.LAZY)
 //	@JoinColumn(name = "product_id")
